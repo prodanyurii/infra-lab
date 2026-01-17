@@ -1,0 +1,11 @@
+[Unit]
+Description=My test app service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/myapp/app.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
