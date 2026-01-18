@@ -1,0 +1,42 @@
+---
+- name: Deploy myapp service
+  hosts: app
+  become: yes
+
+  vars:
+    myapp_dir: /opt/myapp
+
+  tasks:
+    - name: Ensure myapp directory exists
+      file:
+        path: "{{ myapp_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Deploy app.sh script
+      copy:
+        src: ../myapp/app.sh
+        dest: "{{ myapp_dir }}/app.sh"
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Deploy myapp systemd unit
+      copy:
+        src: ../myapp/myapp.service
+        dest: /etc/systemd/system/myapp.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start myapp service
+      systemd:
+        name: myapp
+        enabled: yes
+        state: started
